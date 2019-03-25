@@ -1,5 +1,17 @@
 import React from "react";
 import css from "./authed.module.css";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import Avatar from "@material-ui/core/Avatar";
+import Grid from "@material-ui/core/Grid";
+
+// const API_URL = "http://localhost:5000";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 class Authed extends React.Component {
 	constructor(props) {
@@ -24,7 +36,7 @@ class Authed extends React.Component {
 		event.preventDefault();
 
 		this.setState({ isLoading: true });
-		fetch("http://localhost:5000/login", {
+		fetch(`${API_URL}/login`, {
 			method: "POST",
 			headers: {
 				"Content-type": "application/json",
@@ -47,10 +59,6 @@ class Authed extends React.Component {
 			})
 			.catch(err => console.error(err))
 			.finally(() => this.setState({ isLoading: false }));
-
-		// .then(data => localStorage.setItem("token", data.token))
-		// .then(data => this.setState({ isloggedin: true }))
-		// .then(_ => this.sendToPrivate);
 	};
 
 	logout = () => {
@@ -61,9 +69,7 @@ class Authed extends React.Component {
 		try {
 			this.setState({ isLoading: true });
 			const token = localStorage.getItem("token");
-			const response = await fetch(
-				`http://localhost:5000/private?token=${token}`
-			);
+			const response = await fetch(`${API_URL}/private?token=${token}`);
 			const data = await response.json();
 			console.log(data);
 			this.setState({ secret: data.message });
@@ -80,37 +86,57 @@ class Authed extends React.Component {
 	render() {
 		return (
 			<div>
+				<AppBar
+					position="static"
+					color="default"
+					className={css.appBar}
+				>
+					<Toolbar className={css.toolBar}>
+						<Typography variant="h6" color="inherit">
+							Welcome to the App
+						</Typography>
+					</Toolbar>
+				</AppBar>
 				{this.state.isLoggedIn
 					? "Welcome Home"
 					: "You are not allowed to be here"}
 
 				{!this.state.isLoggedIn ? (
-					<form onSubmit={this.login}>
-						<input
-							onChange={this.onChange}
-							value={this.state.email}
-							name="email"
-							type="email"
-							placeholder="email"
-						/>
-						<input
-							onChange={this.onChange}
-							value={this.state.password}
-							name="password"
-							type="password"
-							placeholder="password"
-						/>
-						<button type="submit">Login</button>
-					</form>
+					<Paper className={css.container}>
+						<form onSubmit={this.login}>
+							<TextField
+								variant="outlined"
+								onChange={this.onChange}
+								value={this.state.email}
+								name="email"
+								type="email"
+								placeholder="email"
+							/>
+							<TextField
+								variant="outlined"
+								onChange={this.onChange}
+								value={this.state.password}
+								name="password"
+								type="password"
+								placeholder="password"
+							/>
+							<Button type="submit">Login</Button>
+						</form>
+					</Paper>
 				) : (
 					<>
-						<button onClick={this.logout}>Log Out</button>
+						<Button variant="fab" onClick={this.logout}>
+							Log Out
+						</Button>
 						{this.state.secret ? (
 							<div>{this.state.secret}</div>
 						) : (
-							<button onClick={this.showSecret}>
+							<Button
+								variant="extendedFab"
+								onClick={this.showSecret}
+							>
 								Show Secret
-							</button>
+							</Button>
 						)}
 					</>
 				)}

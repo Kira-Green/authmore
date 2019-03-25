@@ -1,6 +1,20 @@
 body {
 	background-color: teal;
 }
+.appBar {
+	display: flex;
+	justify-content: center;
+	background-color: aquamarine;
+}
+.toolBar {
+	display: flex;
+	justify-content: center;
+}
+.container {
+	padding: 1rem;
+	margin: 100px;
+	background-color: aquamarine;
+}
 .loader {
 	margin: 100px auto;
 	font-size: 25px;
